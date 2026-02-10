@@ -39,6 +39,37 @@ npm start
 
 Open http://localhost:3000
 
+## Deploying to Render.com
+
+### 1. Push your code to GitHub
+
+Make sure your repository is on GitHub and up to date.
+
+### 2. Create a Web Service on Render
+
+1. Log into [Render.com](https://render.com)
+2. Click **"New +"** → **"Web Service"**
+3. Connect your GitHub repository
+4. Configure:
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+   - **Environment**: Node
+
+### 3. Set Environment Variables
+
+In the Render dashboard, add these environment variables:
+
+| Variable | Value |
+|----------|-------|
+| `GEMINI_API_KEY` | Your Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey) |
+| `GOOGLE_SERVICE_ACCOUNT_KEY` | The entire contents of your `service-account-key.json` file as a single-line JSON string |
+
+**Important**: For `GOOGLE_SERVICE_ACCOUNT_KEY`, copy the **entire JSON content** from your service account key file (everything inside the curly braces `{...}`).
+
+### 4. Deploy
+
+Click **"Create Web Service"** and Render will build and deploy your app!
+
 ## How to use
 
 1. Paste your Google Sheet ID (from the URL: `docs.google.com/spreadsheets/d/{THIS_PART}/edit`)
