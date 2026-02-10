@@ -47,6 +47,46 @@ Open http://localhost:3000
 4. Click **Process all answers**
 5. Results are written to a new tab named `Processed_YYYY-MM-DD` in the same sheet
 
+## Deploying to Render.com
+
+### 1. Push your code to GitHub
+
+Ensure all changes are committed and pushed to your repository.
+
+### 2. Create a new Web Service on Render
+
+1. Log into [Render.com](https://render.com)
+2. Click **New +** → **Web Service**
+3. Connect your GitHub repository
+4. Configure the service:
+   - **Name**: `answer-interpreter` (or your preferred name)
+   - **Region**: Choose closest to your users
+   - **Branch**: `main`
+   - **Runtime**: Node
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm start`
+
+### 3. Configure Environment Variables
+
+In the Render dashboard, add these environment variables:
+
+| Key | Value | Description |
+|-----|-------|-------------|
+| `GEMINI_API_KEY` | Your Gemini API key | Get from https://aistudio.google.com/apikey |
+| `GOOGLE_SERVICE_ACCOUNT_KEY` | Entire JSON content from your service account key file | Copy the entire contents of your `service-account-key.json` file as a single-line string |
+
+**Important**: When setting `GOOGLE_SERVICE_ACCOUNT_KEY`, copy the entire JSON content including the curly braces. Render will handle it as a secure environment variable.
+
+### 4. Deploy
+
+Click **Create Web Service** and Render will automatically deploy your application. Once deployed, you'll receive a URL like `https://answer-interpreter.onrender.com`.
+
+### Notes
+
+- Render's free tier may experience cold starts (15-30 second delay on first request after inactivity)
+- The `PORT` environment variable is automatically set by Render
+- Your Google Sheet must still be shared with the service account email
+
 ## Sheet format
 
 Your sheet should have **2 columns**:

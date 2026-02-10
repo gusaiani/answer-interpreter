@@ -10,10 +10,23 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // ── Google Sheets auth ──────────────────────────────────────────────
 async function getSheetsClient() {
+  let credentials;
+  
+  // Try to read from environment variable first (for cloud deployments like Render)
+  if (process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
+    try {
+      credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
+    } catch (err) {
+      throw new Error("Failed to parse GOOGLE_SERVICE_ACCOUNT_KEY: " + err.message);
+    }
+  }
+  
   const auth = new google.auth.GoogleAuth({
-    keyFile: process.env.GOOGLE_SERVICE_ACCOUNT_KEY_PATH,
+    credentials: credentials,
+    keyFile: credentials ? undefined : process.env.GOOGLE_SERVICE_ACCOUNT_KEY_PATH,
     scopes: ["https://www.googleapis.com/auth/spreadsheets"],
   });
+  
   const client = await auth.getClient();
   return google.sheets({ version: "v4", auth: client });
 }
