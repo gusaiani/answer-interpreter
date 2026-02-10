@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Google / GCP service account keys
+service-account-key.json
+*.pem
+*.p12
+credentials.json
+client_secret*.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build / coverage
+dist/
+build/
+coverage/
+.nyc_output/
+
+# Misc
+*.tgz
+.cache/
