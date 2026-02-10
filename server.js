@@ -14,11 +14,18 @@ async function getSheetsClient() {
   
   if (process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
     // Parse JSON string from environment variable
-    const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
-    auth = new google.auth.GoogleAuth({
-      credentials,
-      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-    });
+    try {
+      const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
+      auth = new google.auth.GoogleAuth({
+        credentials,
+        scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+      });
+    } catch (err) {
+      throw new Error(
+        `Failed to parse GOOGLE_SERVICE_ACCOUNT_KEY: ${err.message}. ` +
+        `Ensure the environment variable contains valid JSON.`
+      );
+    }
   } else {
     // Fall back to file-based approach
     auth = new google.auth.GoogleAuth({
