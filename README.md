@@ -1,123 +1,95 @@
-# AI Marketing Positioner
+# MKT Positioner
 
-A web app with two tools powered by Gemini:
+A Next.js web app with two AI-powered tools for brand positioning, powered by Gemini and Supabase.
 
-1. **Sheet Processor** (`index.html`) — Reads question/answer pairs from a Google Sheet, processes each answer through Gemini with a custom prompt, and writes the results back to a new tab in the same sheet.
+1. **Positioning Interview** — AI-guided brand positioning interview as a chat. Gemini acts as a senior brand strategist, walking you through audience, category, differentiators, proof points, pricing perception, and brand personality. Delivers a Brand Key, Positioning Statement, UVP, and decision log.
 
-2. **Positioning Interview** (`interview.html`) — An AI-guided brand positioning interview conducted as a chat. Gemini acts as a senior brand strategist, walking you through a structured process (audience, category, differentiators, proof points, pricing perception, brand personality) and delivering a Brand Key, Positioning Statement, UVP, and decision log. The conversation can be copied to clipboard or saved directly to a new Google Sheet with organized tabs (CONTROLE, RESPOSTAS, SÍNTESE).
+2. **Batch Processor** — Upload CSV data with question/answer pairs, process each through Gemini with a custom prompt, and view results.
 
-![Positioning Interview screenshot](public/images/interview-screenshot.png)
+## Tech Stack
+
+- **Frontend:** Next.js 16 (App Router, TypeScript, Tailwind CSS)
+- **Auth:** Supabase Auth (email/password + Google OAuth)
+- **Database:** Supabase (PostgreSQL with RLS)
+- **AI:** Google Gemini 2.0 Flash
+- **Export:** XLSX spreadsheet generation
 
 ## Setup
 
-### 1. Get your Gemini API key
+### 1. Supabase Project
 
-- Go to https://aistudio.google.com/apikey
+1. Go to [supabase.com](https://supabase.com) and create a new project named `mkt-positioner`
+2. Wait for provisioning (~2 min)
+3. Go to **Project Settings > API** and copy:
+   - `Project URL` → `NEXT_PUBLIC_SUPABASE_URL`
+   - `anon public` key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `service_role` key → `SUPABASE_SERVICE_ROLE_KEY`
+4. Go to **Authentication > Providers > Email** — ensure enabled (default)
+5. *(Optional)* **Authentication > Providers > Google** — toggle ON, set Google Client ID + Secret from Google Cloud Console, add Supabase redirect URL to Google Console
+6. Go to **SQL Editor** and run the contents of `supabase/schema.sql`
+
+### 2. Gemini API Key
+
+- Go to [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
 - Create an API key
-- You'll add this to your `.env` file
 
-### 2. Set up Google Sheets API access
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project (or select an existing one)
-3. Enable the **Google Sheets API**: APIs & Services → Library → search "Google Sheets API" → Enable
-4. Create a **Service Account**: APIs & Services → Credentials → Create Credentials → Service Account
-5. Create a key for the service account: click the account → Keys → Add Key → JSON
-6. Download the JSON key file and save it as `service-account-key.json` in this project folder
-7. **Share your Google Sheet** with the service account email (it looks like `name@project-id.iam.gserviceaccount.com`) — give it **Editor** access
-
-### 3. Configure environment
+### 3. Configure Environment
 
 ```bash
-cp .env.example .env
+cp .env.example .env.local
 ```
 
-Edit `.env` and fill in:
+Fill in all values in `.env.local`.
 
-- `GEMINI_API_KEY` — your Gemini API key
-- `GOOGLE_SERVICE_ACCOUNT_KEY_PATH` — path to the JSON file (default: `./service-account-key.json`)
-
-### 4. Install & run
+### 4. Install & Run
 
 ```bash
 npm install
-npm start
+npm run dev
 ```
 
 Open http://localhost:3000
 
-## How to use
+### 5. Make Yourself Admin
 
-### Sheet Processor (home page)
+In Supabase SQL Editor:
 
-1. Paste your Google Sheet ID (from the URL: `docs.google.com/spreadsheets/d/{THIS_PART}/edit`)
-2. Click **Load preview** to see your questions & answers
-3. Write your prompt for Gemini (the question and answer are appended automatically)
-4. Click **Process all answers**
-5. Results are written to a new tab named `Processed_YYYY-MM-DD` in the same sheet
+```sql
+UPDATE public.profiles SET is_admin = true WHERE email = 'your@email.com';
+```
 
-### Positioning Interview (`/interview.html`)
+## Deploying to Vercel
 
-1. Open http://localhost:3000/interview.html
-2. The AI interviewer starts automatically and guides you through each stage of the positioning process
-3. Answer each question in the chat — the interviewer will probe for specifics and challenge vague answers
-4. At any point you can pause; the AI provides a Continuity Summary you can paste back later to resume
-5. When the interview is complete, you get a Brand Key, Positioning Statement, UVP, and decision log
-6. Click **Copiar conversa** to copy the full conversation, or **Salvar no Google Sheets** to create a new spreadsheet with all the structured data
+1. Push to GitHub
+2. Import in [Vercel](https://vercel.com)
+3. Set environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY`)
+4. Deploy
+5. Add your Vercel URL to Supabase: **Authentication > URL Configuration > Site URL** and **Redirect URLs**
 
-## Deploying to Render.com
+## Project Structure
 
-### 1. Push your code to GitHub
-
-Ensure all changes are committed and pushed to your repository.
-
-### 2. Create a new Web Service on Render
-
-1. Log into [Render.com](https://render.com)
-2. Click **New +** → **Web Service**
-3. Connect your GitHub repository
-4. Configure the service:
-   - **Name**: `answer-interpreter` (or your preferred name)
-   - **Region**: Choose closest to your users
-   - **Branch**: `main`
-   - **Runtime**: Node
-   - **Build Command**: `npm install`
-   - **Start Command**: `npm start`
-
-### 3. Configure Environment Variables
-
-In the Render dashboard, add these environment variables:
-
-| Key                          | Value                                                  | Description                                                                              |
-| ---------------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
-| `GEMINI_API_KEY`             | Your Gemini API key                                    | Get from https://aistudio.google.com/apikey                                              |
-| `GOOGLE_SERVICE_ACCOUNT_KEY` | Entire JSON content from your service account key file | Copy the entire contents of your `service-account-key.json` file as a single-line string |
-
-**Important**: When setting `GOOGLE_SERVICE_ACCOUNT_KEY`, copy the entire JSON content including the curly braces. Render will handle it as a secure environment variable.
-
-### 4. Deploy
-
-Click **Create Web Service** and Render will automatically deploy your application. Once deployed, you'll receive a URL like `https://answer-interpreter.onrender.com`.
-
-### Notes
-
-- Render's free tier may experience cold starts (15-30 second delay on first request after inactivity)
-- The `PORT` environment variable is automatically set by Render
-- Your Google Sheet must still be shared with the service account email
-
-## Sheet format
-
-Your sheet should have **2 columns**:
-
-| Column A (Question)      | Column B (Answer)              |
-| ------------------------ | ------------------------------ |
-| What is photosynthesis?  | It's when plants make food ... |
-| Explain Newton's 3rd law | For every action there is ...  |
-
-The first row is treated as a header and skipped.
-
-## Notes
-
-- Uses Gemini 2.0 Flash (`gemini-2.0-flash`) for processing. Change the model in `server.js` if needed.
-- Answers are processed sequentially to respect rate limits.
-- The app streams progress updates to the UI via Server-Sent Events.
+```
+src/
+  app/
+    (auth)/          — Login, signup, OAuth callback
+    (app)/           — Authenticated app pages
+      interview/     — Interview chat (new + resume)
+      processor/     — Batch CSV processor
+      history/       — User's interview history
+    admin/           — Admin dashboard, users, interview details
+    api/
+      chat/          — Gemini chat endpoint
+      interview/     — Interview CRUD
+      processor/     — Batch processing with SSE
+      export/        — XLSX download
+  components/
+    chat/            — ChatContainer, ChatInput, ChatMessage
+    processor/       — FileUpload, ResultsTable
+  lib/
+    supabase/        — Browser, server, and admin clients
+    gemini.ts        — Gemini setup + system instruction
+    types.ts         — TypeScript types
+    export.ts        — XLSX generation
+supabase/
+  schema.sql         — Database schema with RLS policies
+```

@@ -1,14 +1,17 @@
 # Dependencies
 node_modules/
 
+# Next.js
+.next/
+out/
+
 # Environment & secrets
 .env
-.env.*
+.env*.local
 !.env.example
 service-account-key.json
 
 # Google / GCP service account keys
-service-account-key.json
 *.pem
 *.p12
 credentials.json
@@ -41,3 +44,10 @@ coverage/
 # Misc
 *.tgz
 .cache/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Vercel
+.vercel

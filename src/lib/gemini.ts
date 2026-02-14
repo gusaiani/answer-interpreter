@@ -1,42 +1,10 @@
-require("dotenv").config();
-const express = require("express");
-const path = require("path");
-const { google } = require("googleapis");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const app = express();
-app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-// ── Google Sheets auth ──────────────────────────────────────────────
-async function getSheetsClient() {
-  let credentials;
-  
-  // Try to read from environment variable first (for cloud deployments like Render)
-  if (process.env.GOOGLE_SERVICE_ACCOUNT_KEY) {
-    try {
-      credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY);
-    } catch (err) {
-      throw new Error("Failed to parse GOOGLE_SERVICE_ACCOUNT_KEY: " + err.message);
-    }
-  }
-  
-  const auth = new google.auth.GoogleAuth({
-    credentials: credentials,
-    keyFile: credentials ? undefined : process.env.GOOGLE_SERVICE_ACCOUNT_KEY_PATH,
-    scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-  });
-  
-  const client = await auth.getClient();
-  return google.sheets({ version: "v4", auth: client });
-}
+export const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-// ── Gemini client ───────────────────────────────────────────────────
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
-// ── Interview chat model (with system instruction) ──────────────────
-const INTERVIEW_SYSTEM_INSTRUCTION = `Você é um(a) estrategista sênior de marca e entrevistador(a) especializado(a) em posicionamento. Vai conduzir uma entrevista guiada (chat) para coletar as informações essenciais e construir um posicionamento claro, específico e utilizável internamente.
+export const INTERVIEW_SYSTEM_INSTRUCTION = `Você é um(a) estrategista sênior de marca e entrevistador(a) especializado(a) em posicionamento. Vai conduzir uma entrevista guiada (chat) para coletar as informações essenciais e construir um posicionamento claro, específico e utilizável internamente.
 
 Olá, estou aqui para ajudar você no processo de criação de um posicionamento. Adiante, o posicionamento servirá de base para os desdobramentos da marca de forma visual e verbal. Farei perguntas individuais sobre cada uma das etapas do processo, e podemos pausar sempre que você precisar. Estou pronta para quando você quiser começar. Quando eu perguntar algo que você não esteja confortável em responder, pode me pedir para esclarecer, pedir um exemplo, analogia, ou qualquer outra coisa que achar que pode ajudar.
 
@@ -112,29 +80,24 @@ Logo no começo, descubra:
 * Se tem uma oferta principal ou várias (e se o posicionamento deve ser guarda-chuva ou por oferta)
 Adapte exemplos e analogias ao setor informado, mas mantenha o método igual.
 
-# 7) Google Sheets (registro durante a entrevista)
+# 7) Registro durante a entrevista
 ## 7.1 Identificação do cliente (obrigatório no começo)
-Logo no início da entrevista, descubra como a planilha deve identificar o cliente e adapte o rótulo do campo:
+Logo no início da entrevista, descubra como identificar o cliente e adapte o rótulo do campo:
 Pergunte:
-* "Para eu organizar sua planilha: você prefere que eu identifique este trabalho como Nome da marca, Nome do profissional ou Nome do projeto?"
+* "Para eu organizar seus dados: você prefere que eu identifique este trabalho como Nome da marca, Nome do profissional ou Nome do projeto?"
 * Em seguida, pergunte o nome escolhido: "Qual é o [rótulo escolhido] exatamente (como você escreve)?"
 
 Regras de adaptação:
 * Se "marca pessoal": sugira "Nome do profissional" como padrão, mas respeite a escolha.
 * Se "empresa": sugira "Nome da marca" como padrão, mas respeite a escolha.
 * Se houver várias ofertas/linhas e o cliente quiser separar: sugira "Nome do projeto" (ex.: "Posicionamento — [Oferta X]").
-* Use o rótulo escolhido em todas as abas e em todos os resumos (inclusive no Resumo de Continuidade).
+* Use o rótulo escolhido em todos os resumos (inclusive no Resumo de Continuidade).
 
-Convenção de nome da planilha:
-Nomeie a planilha como: Posicionamento — [rótulo escolhido]: [nome informado] — [setor] — [data AAAA-MM-DD]
-
-## 7.2 Estrutura da planilha (uma planilha inteira por cliente)
+## 7.2 Estrutura do registro (por cliente)
 Durante a conversa, mantenha um "registro estruturado" do que foi definido.
 
-Requisito: uma planilha inteira por cliente, com quantas linhas e abas forem necessárias.
-
-Crie/organize a planilha do cliente assim:
-* Aba 0 — CONTROLE
+Organize o registro do cliente assim:
+* CONTROLE
     - Valor do identificador: [texto exato informado pelo cliente]
     - Setor:
     - Tipo de marca (pessoal/corporativa):
@@ -142,9 +105,9 @@ Crie/organize a planilha do cliente assim:
     - Etapa atual:
     - Data início:
     - Data última atualização:
-* Aba 1 — RESPOSTAS (RAW)
-* Aba 2 — SÍNTESE (DECISÕES)
-    - Campos finais consolidados (um por linha), para "pular" o que já estiver preenchido:
+* RESPOSTAS (RAW) — todas as perguntas e respostas
+* SÍNTESE (DECISÕES)
+    - Campos finais consolidados (um por linha):
         - Público-alvo escolhido
         - Dor/necessidade central
         - Categoria
@@ -159,8 +122,7 @@ Crie/organize a planilha do cliente assim:
         - UVP (v1)
 
 Regra de "pular perguntas":
-Antes de perguntar algo, verifique se o campo correspondente já está preenchido na Aba 2 (ou se o cliente trouxe no resumo). Se estiver, confirme rapidamente ("Isso continua válido?") e siga.
-Se você não tiver acesso real ao Google Sheets no ambiente, ainda assim mantenha essa estrutura internamente e, ao final, entregue o conteúdo em formato copiável para o usuário colar.
+Antes de perguntar algo, verifique se o campo correspondente já está preenchido (ou se o cliente trouxe no resumo). Se estiver, confirme rapidamente ("Isso continua válido?") e siga.
 
 # Roteiro de entrevista (passo a passo)
 
@@ -168,8 +130,8 @@ Se você não tiver acesso real ao Google Sheets no ambiente, ainda assim manten
 * Retomada (se aplicável):
     - "Se você tiver o Resumo de Continuidade da última sessão, cole aqui agora (isso acelera muito)."
     - Se não tiver: "Sem problemas — você lembra onde paramos e o que já ficou definido?"
-* Identificação para planilha (obrigatório):
-    - "Para eu organizar sua planilha: você prefere que eu identifique este trabalho como Nome da marca, Nome do profissional ou Nome do projeto?"
+* Identificação (obrigatório):
+    - "Para eu organizar seus dados: você prefere que eu identifique este trabalho como Nome da marca, Nome do profissional ou Nome do projeto?"
     - "Qual é o [rótulo escolhido] exatamente (como você escreve)?"
 * Setor e contexto:
     - "Qual é seu setor (ex.: médico, corretor, fisioterapeuta, outro)?"
@@ -331,236 +293,24 @@ Comece agora a entrevista pela Etapa 1.
 
 Responda em formato de chat, conduzindo a entrevista etapa por etapa, respeitando SEMPRE todas as instruções, questionamentos e momento inicial de boas-vindas explicativas. Quando gerar entregáveis finais, organize-os em listas e blocos de texto fáceis de copiar, usando YAML ou JSON sempre que indicado.`;
 
-const interviewModel = genAI.getGenerativeModel({
+export const interviewModel = genAI.getGenerativeModel({
   model: "gemini-2.0-flash",
   systemInstruction: INTERVIEW_SYSTEM_INSTRUCTION,
 });
 
-// ── Retry helper for Gemini rate limits ─────────────────────────────
-async function generateWithRetry(prompt, maxRetries = 3) {
+export async function generateWithRetry(prompt: string, maxRetries = 3): Promise<string> {
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       const result = await model.generateContent(prompt);
       return result.response.text() || "";
-    } catch (err) {
-      const is429 = err.status === 429 || err.message?.includes("429");
+    } catch (err: unknown) {
+      const error = err as { status?: number; message?: string };
+      const is429 = error.status === 429 || error.message?.includes("429");
       if (!is429 || attempt === maxRetries) throw err;
 
-      // Parse retry delay from error or use exponential backoff
       const delaySec = Math.min(10 * 2 ** attempt, 60);
-      console.log(`Rate limited — retrying in ${delaySec}s (attempt ${attempt + 1}/${maxRetries})`);
       await new Promise((r) => setTimeout(r, delaySec * 1000));
     }
   }
+  return "";
 }
-
-// ── GET /api/preview — Read questions & answers from Sheet ──────────
-app.get("/api/preview", async (req, res) => {
-  try {
-    const { spreadsheetId, sheetName } = req.query;
-    if (!spreadsheetId) return res.status(400).json({ error: "spreadsheetId is required" });
-
-    const sheets = await getSheetsClient();
-    const range = sheetName ? `${sheetName}!A:B` : "A:B";
-
-    const response = await sheets.spreadsheets.values.get({
-      spreadsheetId,
-      range,
-    });
-
-    const rows = response.data.values || [];
-    if (rows.length < 2) {
-      return res.json({ headers: rows[0] || [], rows: [] });
-    }
-
-    const [headers, ...dataRows] = rows;
-    const data = dataRows.map((row, i) => ({
-      rowIndex: i + 2, // 1-indexed, skip header
-      question: row[0] || "",
-      answer: row[1] || "",
-    }));
-
-    res.json({ headers, rows: data });
-  } catch (err) {
-    console.error("Preview error:", err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ── POST /api/process — Send answers to Gemini, write results back ──
-app.post("/api/process", async (req, res) => {
-  try {
-    const { spreadsheetId, sheetName, prompt, rows } = req.body;
-    if (!spreadsheetId || !prompt || !rows?.length) {
-      return res.status(400).json({ error: "spreadsheetId, prompt, and rows are required" });
-    }
-
-    // Set up SSE so client gets progress updates
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
-
-    const send = (event, data) => {
-      res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
-    };
-
-    const results = [];
-
-    for (let i = 0; i < rows.length; i++) {
-      const { question, answer } = rows[i];
-      send("progress", { current: i + 1, total: rows.length, question });
-
-      const processed = await generateWithRetry(
-        `${prompt}\n\n---\nQuestion: ${question}\nAnswer: ${answer}`
-      );
-      results.push({ question, answer, processed });
-    }
-
-    // Write results to a new tab in the same spreadsheet
-    const sheets = await getSheetsClient();
-    const outputSheetName = `Processed_${new Date().toISOString().slice(0, 10)}`;
-
-    // Try to add the sheet (ignore error if it already exists)
-    try {
-      await sheets.spreadsheets.batchUpdate({
-        spreadsheetId,
-        resource: {
-          requests: [
-            {
-              addSheet: {
-                properties: { title: outputSheetName },
-              },
-            },
-          ],
-        },
-      });
-    } catch (e) {
-      // Sheet might already exist — that's fine, we'll overwrite
-      if (!e.message.includes("already exists")) throw e;
-    }
-
-    // Write header + data
-    const outputRows = [
-      ["Question", "Original Answer", "Processed Answer"],
-      ...results.map((r) => [r.question, r.answer, r.processed]),
-    ];
-
-    await sheets.spreadsheets.values.update({
-      spreadsheetId,
-      range: `${outputSheetName}!A1`,
-      valueInputOption: "RAW",
-      resource: { values: outputRows },
-    });
-
-    send("done", {
-      sheetName: outputSheetName,
-      totalProcessed: results.length,
-      results,
-    });
-
-    res.end();
-  } catch (err) {
-    console.error("Process error:", err.message);
-    // If headers already sent (SSE), send error event
-    if (res.headersSent) {
-      res.write(`event: error\ndata: ${JSON.stringify({ error: err.message })}\n\n`);
-      res.end();
-    } else {
-      res.status(500).json({ error: err.message });
-    }
-  }
-});
-
-// ── POST /api/chat — Multi-turn interview chat with Gemini ──────────
-app.post("/api/chat", async (req, res) => {
-  try {
-    const { message, history } = req.body;
-    if (!message) return res.status(400).json({ error: "message is required" });
-
-    const chat = interviewModel.startChat({
-      history: history || [],
-    });
-
-    const result = await chat.sendMessage(message);
-    const reply = result.response.text() || "";
-
-    res.json({ reply });
-  } catch (err) {
-    console.error("Chat error:", err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ── POST /api/interview/save — Save interview data to a new Google Sheet ──
-app.post("/api/interview/save", async (req, res) => {
-  try {
-    const { title, controle, respostas, sintese } = req.body;
-    if (!title) return res.status(400).json({ error: "title is required" });
-
-    const sheets = await getSheetsClient();
-
-    // Create a new spreadsheet with 3 tabs
-    const spreadsheet = await sheets.spreadsheets.create({
-      resource: {
-        properties: { title },
-        sheets: [
-          { properties: { title: "CONTROLE", index: 0 } },
-          { properties: { title: "RESPOSTAS (RAW)", index: 1 } },
-          { properties: { title: "SÍNTESE (DECISÕES)", index: 2 } },
-        ],
-      },
-    });
-
-    const spreadsheetId = spreadsheet.data.spreadsheetId;
-    const spreadsheetUrl = spreadsheet.data.spreadsheetUrl;
-
-    // Write data to tabs in parallel
-    const writes = [];
-
-    if (controle && controle.length) {
-      writes.push(
-        sheets.spreadsheets.values.update({
-          spreadsheetId,
-          range: "CONTROLE!A1",
-          valueInputOption: "RAW",
-          resource: { values: controle },
-        })
-      );
-    }
-
-    if (respostas && respostas.length) {
-      writes.push(
-        sheets.spreadsheets.values.update({
-          spreadsheetId,
-          range: "'RESPOSTAS (RAW)'!A1",
-          valueInputOption: "RAW",
-          resource: { values: respostas },
-        })
-      );
-    }
-
-    if (sintese && sintese.length) {
-      writes.push(
-        sheets.spreadsheets.values.update({
-          spreadsheetId,
-          range: "'SÍNTESE (DECISÕES)'!A1",
-          valueInputOption: "RAW",
-          resource: { values: sintese },
-        })
-      );
-    }
-
-    await Promise.all(writes);
-
-    res.json({ spreadsheetId, spreadsheetUrl });
-  } catch (err) {
-    console.error("Interview save error:", err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ── Start ───────────────────────────────────────────────────────────
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running → http://localhost:${PORT}`);
-});
