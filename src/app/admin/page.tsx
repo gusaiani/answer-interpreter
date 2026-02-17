@@ -15,31 +15,21 @@ export default async function AdminDashboardPage() {
   };
 
   return (
-    <div className="max-w-[1100px] mx-auto px-6 py-12 w-full">
-      <h1 className="font-serif text-3xl mb-8">Todas as entrevistas</h1>
+    <div className="page-container-wide">
+      <h1 className="heading-lg mb-8">Todas as entrevistas</h1>
 
       {!interviews?.length ? (
-        <p className="text-text-dim text-sm">Nenhuma entrevista encontrada.</p>
+        <p className="text-muted">Nenhuma entrevista encontrada.</p>
       ) : (
-        <div className="overflow-x-auto border border-border rounded-lg">
-          <table className="w-full text-sm border-collapse">
+        <div className="table-container">
+          <table className="table">
             <thead>
               <tr>
-                <th className="text-left px-4 py-3 bg-surface2 text-[11px] uppercase tracking-wider text-text-dim border-b border-border">
-                  Cliente
-                </th>
-                <th className="text-left px-4 py-3 bg-surface2 text-[11px] uppercase tracking-wider text-text-dim border-b border-border">
-                  Setor
-                </th>
-                <th className="text-left px-4 py-3 bg-surface2 text-[11px] uppercase tracking-wider text-text-dim border-b border-border">
-                  Status
-                </th>
-                <th className="text-left px-4 py-3 bg-surface2 text-[11px] uppercase tracking-wider text-text-dim border-b border-border">
-                  Usuario
-                </th>
-                <th className="text-left px-4 py-3 bg-surface2 text-[11px] uppercase tracking-wider text-text-dim border-b border-border">
-                  Data
-                </th>
+                <th className="th">Cliente</th>
+                <th className="th">Setor</th>
+                <th className="th">Status</th>
+                <th className="th">Usuario</th>
+                <th className="th">Data</th>
               </tr>
             </thead>
             <tbody>
@@ -49,38 +39,35 @@ export default async function AdminDashboardPage() {
                   full_name: string | null;
                 } | null;
                 return (
-                  <tr
-                    key={interview.id}
-                    className="hover:bg-surface transition-colors"
-                  >
-                    <td className="px-4 py-3 border-b border-border">
+                  <tr key={interview.id} className="tr-hover">
+                    <td className="td">
                       <Link
                         href={`/admin/interviews/${interview.id}`}
-                        className="text-accent hover:underline"
+                        className="link"
                       >
                         {interview.identifier_value ||
                           interview.title ||
                           "Sem titulo"}
                       </Link>
                     </td>
-                    <td className="px-4 py-3 border-b border-border text-text-dim">
+                    <td className="td-muted">
                       {interview.sector || "-"}
                     </td>
-                    <td className="px-4 py-3 border-b border-border">
+                    <td className="td">
                       <span
-                        className={`inline-block text-[10px] font-medium px-2 py-0.5 rounded uppercase tracking-wider ${
+                        className={
                           interview.status === "concluido"
-                            ? "bg-accent/15 text-accent"
-                            : "bg-text-dim/15 text-text-dim"
-                        }`}
+                            ? "badge-success"
+                            : "badge-muted"
+                        }
                       >
                         {statusLabel[interview.status]}
                       </span>
                     </td>
-                    <td className="px-4 py-3 border-b border-border text-text-dim">
+                    <td className="td-muted">
                       {profile?.email || "-"}
                     </td>
-                    <td className="px-4 py-3 border-b border-border text-text-dim">
+                    <td className="td-muted">
                       {new Date(interview.created_at).toLocaleDateString(
                         "pt-BR"
                       )}

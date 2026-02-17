@@ -40,8 +40,8 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
   }
 
   return (
-    <div className="border-t border-border px-6 py-4 flex-shrink-0">
-      <div className="max-w-[860px] mx-auto flex gap-3 items-end">
+    <div className="chat-input-bar">
+      <div className="chat-input-inner">
         <textarea
           ref={textareaRef}
           onInput={handleInput}
@@ -49,12 +49,12 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           placeholder="Digite sua resposta..."
           rows={1}
           disabled={disabled}
-          className="flex-1 bg-surface border border-border text-text font-mono text-sm px-4 py-3 rounded-lg outline-none resize-none min-h-[48px] max-h-[160px] leading-relaxed transition-colors focus:border-accent-dim disabled:opacity-40"
+          className="chat-textarea"
         />
         <button
           onClick={handleSend}
           disabled={disabled}
-          className="bg-accent text-bg font-mono text-sm font-medium px-6 py-3 rounded-lg transition-all hover:bg-accent-hover hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+          className="btn-primary"
         >
           Enviar
         </button>

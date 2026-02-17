@@ -25,49 +25,37 @@ export default async function AppLayout({
     .single();
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <nav className="border-b border-border px-6 py-4 flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-8">
-          <Link href="/interview" className="font-serif text-xl">
+    <div className="app-shell">
+      <nav className="navbar">
+        <div className="navbar-left">
+          <Link href="/interview" className="nav-brand">
             Posicionamento
           </Link>
-          <div className="flex items-center gap-6 text-sm">
-            <Link
-              href="/interview"
-              className="text-text-dim hover:text-accent transition-colors"
-            >
+          <div className="nav-links">
+            <Link href="/interview" className="nav-link">
               Entrevista
             </Link>
-            <Link
-              href="/processor"
-              className="text-text-dim hover:text-accent transition-colors"
-            >
+            <Link href="/processor" className="nav-link">
               Processador
             </Link>
-            <Link
-              href="/history"
-              className="text-text-dim hover:text-accent transition-colors"
-            >
+            <Link href="/history" className="nav-link">
               Historico
             </Link>
             {profile?.is_admin && (
-              <Link
-                href="/admin"
-                className="text-text-dim hover:text-accent transition-colors"
-              >
+              <Link href="/admin" className="nav-link">
                 Admin
               </Link>
             )}
           </div>
         </div>
-        <div className="flex items-center gap-4 text-sm">
+        <div className="navbar-right">
           <span className="text-text-dim">
             {profile?.full_name || user.email}
           </span>
           <SignOutButton />
         </div>
       </nav>
-      <main className="flex-1 flex flex-col">{children}</main>
+      <main className="main-content">{children}</main>
     </div>
   );
 }
