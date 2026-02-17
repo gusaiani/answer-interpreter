@@ -20,10 +20,10 @@ A Next.js web app with two AI-powered tools for brand positioning, powered by Ge
 
 1. Go to [supabase.com](https://supabase.com) and create a new project named `mkt-positioner`
 2. Wait for provisioning (~2 min)
-3. Go to **Project Settings > API** and copy:
+3. Go to **Project Settings > API Keys** and copy:
    - `Project URL` → `NEXT_PUBLIC_SUPABASE_URL`
-   - `anon public` key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `service_role` key → `SUPABASE_SERVICE_ROLE_KEY`
+   - Publishable key (`sb_publishable_...`) → `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+   - Secret key (`sb_secret_...`) → `SUPABASE_SECRET_KEY`
 4. Go to **Authentication > Providers > Email** — ensure enabled (default)
 5. *(Optional)* **Authentication > Providers > Google** — toggle ON, set Google Client ID + Secret from Google Cloud Console, add Supabase redirect URL to Google Console
 6. Go to **SQL Editor** and run the contents of `supabase/schema.sql`
@@ -62,7 +62,7 @@ UPDATE public.profiles SET is_admin = true WHERE email = 'your@email.com';
 
 1. Push to GitHub
 2. Import in [Vercel](https://vercel.com)
-3. Set environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY`)
+3. Set environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `GEMINI_API_KEY`)
 4. Deploy
 5. Add your Vercel URL to Supabase: **Authentication > URL Configuration > Site URL** and **Redirect URLs**
 

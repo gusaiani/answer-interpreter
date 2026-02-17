@@ -13,36 +13,31 @@ create table public.profiles (
   updated_at timestamptz default now()
 );
 
+-- Helper function to check admin status (bypasses RLS to avoid recursion)
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer
+stable
+set search_path = ''
+as $$
+  select coalesce(
+    (select is_admin from public.profiles where id = auth.uid()),
+    false
+  );
+$$;
+
 alter table public.profiles enable row level security;
 
--- Users can read/update own profile
+-- Users can read own profile; admins can read all
 create policy "Users can view own profile"
   on public.profiles for select
-  using (auth.uid() = id);
+  using (auth.uid() = id or public.is_admin());
 
+-- Users can update own profile; admins can update all
 create policy "Users can update own profile"
   on public.profiles for update
-  using (auth.uid() = id);
-
--- Admins can view all profiles
-create policy "Admins can view all profiles"
-  on public.profiles for select
-  using (
-    exists (
-      select 1 from public.profiles
-      where id = auth.uid() and is_admin = true
-    )
-  );
-
--- Admins can update all profiles (e.g., toggle admin)
-create policy "Admins can update all profiles"
-  on public.profiles for update
-  using (
-    exists (
-      select 1 from public.profiles
-      where id = auth.uid() and is_admin = true
-    )
-  );
+  using (auth.uid() = id or public.is_admin());
 
 -- Auto-create profile on signup
 create or replace function public.handle_new_user()
@@ -89,12 +84,7 @@ create policy "Users can CRUD own interviews"
 
 create policy "Admins can view all interviews"
   on public.interviews for select
-  using (
-    exists (
-      select 1 from public.profiles
-      where id = auth.uid() and is_admin = true
-    )
-  );
+  using (public.is_admin());
 
 -- 3. Interview Messages
 create table public.interview_messages (
@@ -122,12 +112,7 @@ create policy "Users can CRUD own interview messages"
 
 create policy "Admins can view all interview messages"
   on public.interview_messages for select
-  using (
-    exists (
-      select 1 from public.profiles
-      where id = auth.uid() and is_admin = true
-    )
-  );
+  using (public.is_admin());
 
 -- 4. Batch Jobs
 create table public.batch_jobs (
@@ -148,12 +133,7 @@ create policy "Users can CRUD own batch jobs"
 
 create policy "Admins can view all batch jobs"
   on public.batch_jobs for select
-  using (
-    exists (
-      select 1 from public.profiles
-      where id = auth.uid() and is_admin = true
-    )
-  );
+  using (public.is_admin());
 
 -- 5. Batch Items
 create table public.batch_items (
@@ -181,12 +161,7 @@ create policy "Users can CRUD own batch items"
 
 create policy "Admins can view all batch items"
   on public.batch_items for select
-  using (
-    exists (
-      select 1 from public.profiles
-      where id = auth.uid() and is_admin = true
-    )
-  );
+  using (public.is_admin());
 
 -- ============================================================
 -- To make a user admin:
