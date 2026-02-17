@@ -1,17 +1,11 @@
 import type { Metadata } from "next";
-import { DM_Mono, Instrument_Serif } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const dmMono = DM_Mono({
-  variable: "--font-dm-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500"],
-});
-
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
-  subsets: ["latin"],
-  weight: "400",
+  weight: ["300", "400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -26,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className={`${dmMono.variable} ${instrumentSerif.variable} antialiased`}>
+      <body className={`${inter.variable} antialiased`}>
         {children}
       </body>
     </html>

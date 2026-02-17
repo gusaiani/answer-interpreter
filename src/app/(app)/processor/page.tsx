@@ -97,7 +97,7 @@ export default function ProcessorPage() {
     <div className="page-container">
       <header className="mb-12">
         <h1 className="heading-hero">
-          Processador <span className="text-accent">Gemini</span>
+          Processador Gemini
         </h1>
         <p className="text-muted mt-3">
           Carregue perguntas e respostas, processe cada uma com Gemini usando seu prompt.
