@@ -39,57 +39,42 @@ export default function AdminUsersPage() {
 
   if (loading) {
     return (
-      <div className="max-w-[860px] mx-auto px-6 py-12">
-        <p className="text-text-dim">Carregando...</p>
+      <div className="page-container">
+        <p className="text-muted">Carregando...</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-[860px] mx-auto px-6 py-12 w-full">
-      <h1 className="font-serif text-3xl mb-8">Usuarios</h1>
+    <div className="page-container">
+      <h1 className="heading-lg mb-8">Usuarios</h1>
 
-      <div className="overflow-x-auto border border-border rounded-lg">
-        <table className="w-full text-sm border-collapse">
+      <div className="table-container">
+        <table className="table">
           <thead>
             <tr>
-              <th className="text-left px-4 py-3 bg-surface2 text-[11px] uppercase tracking-wider text-text-dim border-b border-border">
-                Nome
-              </th>
-              <th className="text-left px-4 py-3 bg-surface2 text-[11px] uppercase tracking-wider text-text-dim border-b border-border">
-                Email
-              </th>
-              <th className="text-left px-4 py-3 bg-surface2 text-[11px] uppercase tracking-wider text-text-dim border-b border-border">
-                Cadastro
-              </th>
-              <th className="text-left px-4 py-3 bg-surface2 text-[11px] uppercase tracking-wider text-text-dim border-b border-border">
-                Admin
-              </th>
+              <th className="th">Nome</th>
+              <th className="th">Email</th>
+              <th className="th">Cadastro</th>
+              <th className="th">Admin</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr
-                key={user.id}
-                className="hover:bg-surface transition-colors"
-              >
-                <td className="px-4 py-3 border-b border-border">
-                  {user.full_name || "-"}
-                </td>
-                <td className="px-4 py-3 border-b border-border text-text-dim">
-                  {user.email}
-                </td>
-                <td className="px-4 py-3 border-b border-border text-text-dim">
+              <tr key={user.id} className="tr-hover">
+                <td className="td">{user.full_name || "-"}</td>
+                <td className="td-muted">{user.email}</td>
+                <td className="td-muted">
                   {new Date(user.created_at).toLocaleDateString("pt-BR")}
                 </td>
-                <td className="px-4 py-3 border-b border-border">
+                <td className="td">
                   <button
                     onClick={() => toggleAdmin(user.id, user.is_admin)}
-                    className={`text-xs font-medium px-3 py-1 rounded transition-colors ${
+                    className={
                       user.is_admin
-                        ? "bg-accent/15 text-accent hover:bg-accent/25"
-                        : "bg-surface2 text-text-dim border border-border hover:border-text-dim"
-                    }`}
+                        ? "toggle-btn-active"
+                        : "toggle-btn-inactive"
+                    }
                   >
                     {user.is_admin ? "Admin" : "Membro"}
                   </button>

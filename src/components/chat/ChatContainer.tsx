@@ -118,18 +118,15 @@ export function ChatContainer({
   }
 
   return (
-    <div className="flex-1 flex flex-col min-h-0">
-      <div
-        ref={chatRef}
-        className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-4 max-w-[860px] w-full mx-auto"
-      >
+    <div className="chat-layout">
+      <div ref={chatRef} className="chat-area">
         {messages
           .filter((m) => !(m.role === "user" && m.content === "Iniciar entrevista"))
           .map((m, i) => (
             <ChatMessage key={i} role={m.role} content={m.content} />
           ))}
         {isWaiting && (
-          <div className="self-start bg-surface2 border border-border rounded-xl rounded-bl-sm px-4 py-3 text-sm text-text-dim italic">
+          <div className="chat-typing">
             Digitando...
           </div>
         )}

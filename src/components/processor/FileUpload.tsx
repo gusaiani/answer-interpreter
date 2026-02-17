@@ -53,9 +53,7 @@ export function FileUpload({ onDataLoaded }: FileUploadProps) {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <label className="block text-[11px] uppercase tracking-wider text-text-dim mb-2">
-          Upload CSV
-        </label>
+        <label className="label">Upload CSV</label>
         <input
           ref={fileRef}
           type="file"
@@ -65,20 +63,20 @@ export function FileUpload({ onDataLoaded }: FileUploadProps) {
         />
         <button
           onClick={() => fileRef.current?.click()}
-          className="bg-surface2 text-text border border-border font-mono text-sm font-medium py-3 px-6 rounded-lg transition-all hover:border-text-dim"
+          className="btn-secondary"
         >
           Selecionar arquivo
         </button>
-        <p className="text-[11px] text-text-dim mt-2">
+        <p className="hint">
           CSV com 2 colunas: Pergunta, Resposta (primeira linha = cabecalho)
         </p>
       </div>
 
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
+      <div className="divider">
+        <div className="divider-line">
           <div className="w-full border-t border-border" />
         </div>
-        <div className="relative flex justify-center text-xs">
+        <div className="divider-text">
           <span className="bg-bg px-4 text-text-dim">ou cole os dados</span>
         </div>
       </div>
@@ -89,12 +87,12 @@ export function FileUpload({ onDataLoaded }: FileUploadProps) {
           onChange={(e) => setPasteData(e.target.value)}
           placeholder={"Pergunta\tResposta\nQual seu nome?\tJoao"}
           rows={6}
-          className="w-full bg-surface border border-border text-text font-mono text-sm px-4 py-3 rounded-lg outline-none resize-y min-h-[120px] transition-colors focus:border-accent-dim"
+          className="textarea"
         />
         <button
           onClick={handlePaste}
           disabled={!pasteData.trim()}
-          className="mt-2 bg-surface2 text-text border border-border font-mono text-sm font-medium py-2 px-4 rounded-lg transition-all hover:border-text-dim disabled:opacity-40 disabled:cursor-not-allowed"
+          className="btn-secondary-sm mt-2"
         >
           Carregar dados
         </button>

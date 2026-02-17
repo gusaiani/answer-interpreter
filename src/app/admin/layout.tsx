@@ -25,34 +25,25 @@ export default async function AdminLayout({
   if (!profile?.is_admin) redirect("/interview");
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <nav className="border-b border-border px-6 py-4 flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-8">
-          <Link href="/admin" className="font-serif text-xl">
+    <div className="app-shell">
+      <nav className="navbar">
+        <div className="navbar-left">
+          <Link href="/admin" className="nav-brand">
             Admin
           </Link>
-          <div className="flex items-center gap-6 text-sm">
-            <Link
-              href="/admin"
-              className="text-text-dim hover:text-accent transition-colors"
-            >
+          <div className="nav-links">
+            <Link href="/admin" className="nav-link">
               Dashboard
             </Link>
-            <Link
-              href="/admin/users"
-              className="text-text-dim hover:text-accent transition-colors"
-            >
+            <Link href="/admin/users" className="nav-link">
               Usuarios
             </Link>
-            <Link
-              href="/interview"
-              className="text-text-dim hover:text-accent transition-colors"
-            >
+            <Link href="/interview" className="nav-link">
               Voltar ao app
             </Link>
           </div>
         </div>
-        <div className="flex items-center gap-4 text-sm">
+        <div className="navbar-right">
           <span className="text-text-dim">
             {profile.full_name || user.email}
           </span>

@@ -24,15 +24,15 @@ export default function InterviewPage() {
 
   if (!loading) {
     return (
-      <div className="flex-1 flex items-center justify-center">
-        <p className="text-error">Erro ao criar entrevista. Tente novamente.</p>
+      <div className="center-page">
+        <p className="error-text">Erro ao criar entrevista. Tente novamente.</p>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex items-center justify-center">
-      <p className="text-text-dim">Criando entrevista...</p>
+    <div className="center-page">
+      <p className="text-muted">Criando entrevista...</p>
     </div>
   );
 }

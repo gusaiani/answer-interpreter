@@ -52,3 +52,309 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-dim);
 }
+
+@layer components {
+
+/* ── Layout ────────────────────────────────────────────────── */
+
+.app-shell {
+  @apply min-h-screen flex flex-col;
+}
+
+.page-container {
+  @apply max-w-[860px] mx-auto px-6 py-12 w-full;
+}
+
+.page-container-wide {
+  @apply max-w-[1100px] mx-auto px-6 py-12 w-full;
+}
+
+.center-page {
+  @apply flex-1 flex items-center justify-center;
+}
+
+.auth-page {
+  @apply flex min-h-screen items-center justify-center px-6;
+}
+
+.auth-card {
+  @apply w-full max-w-sm;
+}
+
+.main-content {
+  @apply flex-1 flex flex-col;
+}
+
+/* ── Navbar ────────────────────────────────────────────────── */
+
+.navbar {
+  @apply border-b border-border px-6 py-4 flex items-center justify-between flex-shrink-0;
+}
+
+.navbar-left {
+  @apply flex items-center gap-8;
+}
+
+.navbar-right {
+  @apply flex items-center gap-4 text-sm;
+}
+
+.nav-brand {
+  @apply font-serif text-xl;
+}
+
+.nav-links {
+  @apply flex items-center gap-6 text-sm;
+}
+
+.nav-link {
+  @apply text-text-dim hover:text-accent transition-colors;
+}
+
+/* ── Typography ────────────────────────────────────────────── */
+
+.heading-hero {
+  @apply font-serif text-5xl leading-tight;
+}
+
+.heading-xl {
+  @apply font-serif text-4xl;
+}
+
+.heading-lg {
+  @apply font-serif text-3xl;
+}
+
+.heading-md {
+  @apply font-serif text-xl;
+}
+
+.text-muted {
+  @apply text-text-dim text-sm;
+}
+
+/* ── Buttons ───────────────────────────────────────────────── */
+
+.btn-primary {
+  @apply bg-accent text-bg font-mono text-sm font-medium py-3 px-6 rounded-lg transition-all hover:bg-accent-hover hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed;
+}
+
+.btn-primary-sm {
+  @apply bg-accent text-bg font-mono text-sm font-medium py-2 px-4 rounded-lg transition-all hover:bg-accent-hover hover:-translate-y-0.5;
+}
+
+.btn-secondary {
+  @apply bg-surface2 text-text border border-border font-mono text-sm font-medium py-3 px-6 rounded-lg transition-all hover:border-text-dim;
+}
+
+.btn-secondary-sm {
+  @apply bg-surface2 text-text border border-border font-mono text-sm font-medium py-2 px-4 rounded-lg transition-all hover:border-text-dim disabled:opacity-40 disabled:cursor-not-allowed;
+}
+
+.btn-export {
+  @apply bg-surface2 text-text border border-border font-mono text-xs font-medium py-2 px-4 rounded-lg transition-all hover:border-text-dim;
+}
+
+.btn-signout {
+  @apply text-text-dim hover:text-error transition-colors text-sm;
+}
+
+/* ── Form Elements ─────────────────────────────────────────── */
+
+.label {
+  @apply block text-[11px] uppercase tracking-wider text-text-dim mb-2;
+}
+
+.input {
+  @apply w-full bg-surface border border-border text-text font-mono text-sm px-4 py-3 rounded-lg outline-none transition-colors focus:border-accent-dim;
+}
+
+.textarea {
+  @apply w-full bg-surface border border-border text-text font-mono text-sm px-4 py-3 rounded-lg outline-none resize-y min-h-[120px] transition-colors focus:border-accent-dim;
+}
+
+.form-stack {
+  @apply flex flex-col gap-4;
+}
+
+.hint {
+  @apply text-[11px] text-text-dim mt-2;
+}
+
+/* ── Tables ────────────────────────────────────────────────── */
+
+.table-container {
+  @apply overflow-x-auto border border-border rounded-lg;
+}
+
+.table {
+  @apply w-full text-sm border-collapse;
+}
+
+.th {
+  @apply text-left px-4 py-3 bg-surface2 text-[11px] uppercase tracking-wider text-text-dim border-b border-border;
+}
+
+.td {
+  @apply px-4 py-3 border-b border-border;
+}
+
+.td-muted {
+  @apply px-4 py-3 border-b border-border text-text-dim;
+}
+
+.td-truncate {
+  @apply px-4 py-3 border-b border-border max-w-[280px] overflow-hidden text-ellipsis;
+}
+
+.td-truncate-wide {
+  @apply px-4 py-3 border-b border-border max-w-[380px] overflow-hidden text-ellipsis whitespace-nowrap;
+}
+
+.tr-hover {
+  @apply hover:bg-surface transition-colors;
+}
+
+/* ── Badges ────────────────────────────────────────────────── */
+
+.badge {
+  @apply inline-block text-[10px] font-medium px-2 py-0.5 rounded uppercase tracking-wider;
+}
+
+.badge-accent {
+  @apply inline-block text-[10px] font-medium px-2 py-0.5 rounded uppercase tracking-wider bg-accent text-bg;
+}
+
+.badge-success {
+  @apply inline-block text-[10px] font-medium px-2 py-0.5 rounded uppercase tracking-wider bg-accent/15 text-accent;
+}
+
+.badge-muted {
+  @apply inline-block text-[10px] font-medium px-2 py-0.5 rounded uppercase tracking-wider bg-text-dim/15 text-text-dim;
+}
+
+/* ── Chat ──────────────────────────────────────────────────── */
+
+.chat-layout {
+  @apply flex-1 flex flex-col min-h-0;
+}
+
+.chat-area {
+  @apply flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-4 max-w-[860px] w-full mx-auto;
+}
+
+.chat-bubble {
+  @apply max-w-[80%] px-4 py-3 rounded-xl text-sm leading-relaxed whitespace-pre-wrap break-words;
+}
+
+.chat-bubble-user {
+  @apply max-w-[80%] px-4 py-3 rounded-xl text-sm leading-relaxed whitespace-pre-wrap break-words self-end bg-accent text-bg rounded-br-sm;
+}
+
+.chat-bubble-model {
+  @apply max-w-[80%] px-4 py-3 rounded-xl text-sm leading-relaxed whitespace-pre-wrap break-words self-start bg-surface2 border border-border rounded-bl-sm;
+}
+
+.chat-typing {
+  @apply self-start bg-surface2 border border-border rounded-xl rounded-bl-sm px-4 py-3 text-sm text-text-dim italic;
+}
+
+.chat-input-bar {
+  @apply border-t border-border px-6 py-4 flex-shrink-0;
+}
+
+.chat-input-inner {
+  @apply max-w-[860px] mx-auto flex gap-3 items-end;
+}
+
+.chat-textarea {
+  @apply flex-1 bg-surface border border-border text-text font-mono text-sm px-4 py-3 rounded-lg outline-none resize-none min-h-[48px] max-h-[160px] leading-relaxed transition-colors focus:border-accent-dim disabled:opacity-40;
+}
+
+.chat-transcript {
+  @apply flex flex-col gap-3;
+}
+
+/* ── Cards ─────────────────────────────────────────────────── */
+
+.card {
+  @apply bg-surface border border-border rounded-lg p-6;
+}
+
+/* ── Divider ───────────────────────────────────────────────── */
+
+.divider {
+  @apply relative my-6;
+}
+
+.divider-line {
+  @apply absolute inset-0 flex items-center;
+}
+
+.divider-text {
+  @apply relative flex justify-center text-xs;
+}
+
+/* ── Status Messages ───────────────────────────────────────── */
+
+.status-msg {
+  @apply mt-6 px-4 py-3 rounded-lg text-sm;
+}
+
+.status-success {
+  @apply mt-6 px-4 py-3 rounded-lg text-sm bg-accent/8 border border-accent/25 text-accent;
+}
+
+.status-error {
+  @apply mt-6 px-4 py-3 rounded-lg text-sm bg-error/8 border border-error/25 text-error;
+}
+
+/* ── Progress Bar ──────────────────────────────────────────── */
+
+.progress-track {
+  @apply h-1.5 bg-surface2 rounded-full overflow-hidden mb-3;
+}
+
+.progress-fill {
+  @apply h-full bg-accent rounded-full transition-all duration-400;
+}
+
+/* ── Links ─────────────────────────────────────────────────── */
+
+.link {
+  @apply text-accent hover:underline;
+}
+
+.link-sm {
+  @apply text-accent hover:underline text-sm;
+}
+
+.link-back {
+  @apply text-text-dim hover:text-accent text-sm transition-colors mb-6 inline-block;
+}
+
+/* ── Admin Toggle ──────────────────────────────────────────── */
+
+.toggle-btn {
+  @apply text-xs font-medium px-3 py-1 rounded transition-colors;
+}
+
+.toggle-btn-active {
+  @apply text-xs font-medium px-3 py-1 rounded transition-colors bg-accent/15 text-accent hover:bg-accent/25;
+}
+
+.toggle-btn-inactive {
+  @apply text-xs font-medium px-3 py-1 rounded transition-colors bg-surface2 text-text-dim border border-border hover:border-text-dim;
+}
+
+/* ── Misc ──────────────────────────────────────────────────── */
+
+.pre-block {
+  @apply bg-surface border border-border rounded-lg px-4 py-3 text-sm whitespace-pre-wrap;
+}
+
+.error-text {
+  @apply text-error text-sm;
+}
+
+} /* end @layer components */

@@ -44,20 +44,16 @@ export default async function BatchJobDetailPage({
   };
 
   return (
-    <div className="max-w-[860px] mx-auto px-6 py-12 w-full">
-      <h1 className="font-serif text-3xl mb-2">{job.title}</h1>
-      <div className="flex gap-4 text-sm text-text-dim mb-8">
+    <div className="page-container">
+      <h1 className="heading-lg mb-2">{job.title}</h1>
+      <div className="flex gap-4 text-muted mb-8">
         <span>Status: {statusLabel[job.status]}</span>
         <span>Criado: {new Date(job.created_at).toLocaleDateString("pt-BR")}</span>
       </div>
 
       <div className="mb-6">
-        <label className="block text-[11px] uppercase tracking-wider text-text-dim mb-2">
-          Prompt utilizado
-        </label>
-        <div className="bg-surface border border-border rounded-lg px-4 py-3 text-sm whitespace-pre-wrap">
-          {job.prompt}
-        </div>
+        <label className="label">Prompt utilizado</label>
+        <div className="pre-block">{job.prompt}</div>
       </div>
 
       <ResultsTable results={results} />
