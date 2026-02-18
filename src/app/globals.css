@@ -236,11 +236,11 @@ body {
 /* ── Chat ──────────────────────────────────────────────────── */
 
 .chat-layout {
-  @apply flex-1 flex flex-col min-h-0;
+  @apply flex-1 flex flex-col;
 }
 
 .chat-area {
-  @apply flex-1 overflow-y-auto px-8 py-8 flex flex-col gap-5 max-w-[780px] w-full mx-auto;
+  @apply px-8 py-8 flex flex-col gap-5 max-w-[780px] w-full mx-auto;
 }
 
 .chat-bubble {
@@ -260,7 +260,7 @@ body {
 }
 
 .chat-input-bar {
-  @apply border-t border-border px-8 py-5 flex-shrink-0;
+  @apply sticky bottom-0 bg-bg border-t border-border px-8 py-5;
 }
 
 .chat-input-inner {

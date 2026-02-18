@@ -26,12 +26,10 @@ export function ChatContainer({
   >(initialMessages.map((m) => ({ role: m.role, content: m.content })));
   const [isWaiting, setIsWaiting] = useState(false);
   const [started, setStarted] = useState(initialMessages.length > 0);
-  const chatRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
-    if (chatRef.current) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight;
-    }
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
   useEffect(() => {
@@ -119,7 +117,7 @@ export function ChatContainer({
 
   return (
     <div className="chat-layout">
-      <div ref={chatRef} className="chat-area">
+      <div className="chat-area">
         {messages
           .filter((m) => !(m.role === "user" && m.content === "Iniciar entrevista"))
           .map((m, i) => (
@@ -130,6 +128,7 @@ export function ChatContainer({
             Digitando...
           </div>
         )}
+        <div ref={bottomRef} />
       </div>
       <ChatInput onSend={sendMessage} disabled={isWaiting} />
     </div>
