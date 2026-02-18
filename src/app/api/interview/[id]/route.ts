@@ -65,6 +65,7 @@ export async function PATCH(
   if (body.sector !== undefined) updates.sector = body.sector;
   if (body.brand_type !== undefined) updates.brand_type = body.brand_type;
   if (body.current_stage !== undefined) updates.current_stage = body.current_stage;
+  if (body.language !== undefined) updates.language = body.language;
 
   const { data, error } = await supabase
     .from("interviews")

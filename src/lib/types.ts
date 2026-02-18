@@ -18,6 +18,7 @@ export interface Interview {
   brand_type: string | null;
   current_stage: string | null;
   synthesis: InterviewSynthesis | null;
+  language: string | null;
   created_at: string;
   updated_at: string;
 }

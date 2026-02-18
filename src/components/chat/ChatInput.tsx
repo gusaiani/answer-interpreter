@@ -5,9 +5,11 @@ import { useRef, useCallback } from "react";
 interface ChatInputProps {
   onSend: (message: string) => void;
   disabled: boolean;
+  placeholder?: string;
+  sendLabel?: string;
 }
 
-export function ChatInput({ onSend, disabled }: ChatInputProps) {
+export function ChatInput({ onSend, disabled, placeholder = "Digite sua resposta...", sendLabel = "Enviar" }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleInput = useCallback(() => {
@@ -46,7 +48,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           ref={textareaRef}
           onInput={handleInput}
           onKeyDown={handleKeyDown}
-          placeholder="Digite sua resposta..."
+          placeholder={placeholder}
           rows={1}
           disabled={disabled}
           className="chat-textarea"
@@ -56,7 +58,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           disabled={disabled}
           className="btn-primary"
         >
-          Enviar
+          {sendLabel}
         </button>
       </div>
     </div>

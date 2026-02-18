@@ -1,7 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { SignOutButton } from "@/components/SignOutButton";
+import { LanguageProvider } from "@/context/LanguageContext";
+import { NavLinks } from "@/components/NavLinks";
+import { NavRight } from "@/components/NavRight";
 
 export default async function AppLayout({
   children,
@@ -25,37 +27,19 @@ export default async function AppLayout({
     .single();
 
   return (
-    <div className="app-shell">
-      <nav className="navbar">
-        <div className="navbar-left">
-          <Link href="/interview" className="nav-brand">
-            Posicionamento
-          </Link>
-          <div className="nav-links">
-            <Link href="/interview" className="nav-link">
-              Entrevista
+    <LanguageProvider>
+      <div className="app-shell">
+        <nav className="navbar">
+          <div className="navbar-left">
+            <Link href="/interview" className="nav-brand">
+              Posicionamento
             </Link>
-            <Link href="/processor" className="nav-link">
-              Processador
-            </Link>
-            <Link href="/history" className="nav-link">
-              Historico
-            </Link>
-            {profile?.is_admin && (
-              <Link href="/admin" className="nav-link">
-                Admin
-              </Link>
-            )}
+            <NavLinks isAdmin={profile?.is_admin ?? false} />
           </div>
-        </div>
-        <div className="navbar-right">
-          <span className="text-text-dim">
-            {profile?.full_name || user.email}
-          </span>
-          <SignOutButton />
-        </div>
-      </nav>
-      <main className="main-content">{children}</main>
-    </div>
+          <NavRight displayName={profile?.full_name || user.email || ""} />
+        </nav>
+        <main className="main-content">{children}</main>
+      </div>
+    </LanguageProvider>
   );
 }

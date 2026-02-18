@@ -293,10 +293,39 @@ Comece agora a entrevista pela Etapa 1.
 
 Responda em formato de chat, conduzindo a entrevista etapa por etapa, respeitando SEMPRE todas as instruções, questionamentos e momento inicial de boas-vindas explicativas. Quando gerar entregáveis finais, organize-os em listas e blocos de texto fáceis de copiar, usando YAML ou JSON sempre que indicado.`;
 
-export const interviewModel = genAI.getGenerativeModel({
-  model: "gemini-2.0-flash",
-  systemInstruction: INTERVIEW_SYSTEM_INSTRUCTION,
-});
+const LANGUAGE_DIRECTIVES: Record<string, { prefix: string; suffix: string }> = {
+  en: {
+    prefix:
+      "CRITICAL LANGUAGE INSTRUCTION: You MUST conduct this entire interview in English. Every single message, question, response, summary, and deliverable must be written in English. The instructions below are written in Portuguese — follow their meaning and methodology, but always respond in English. Do not write a single word in Portuguese.\n\n",
+    suffix:
+      "\n\nFINAL REMINDER: All your responses must be in English only. Never use Portuguese.",
+  },
+  es: {
+    prefix:
+      "INSTRUCCIÓN DE IDIOMA CRÍTICA: DEBES conducir toda esta entrevista en español. Cada mensaje, pregunta, respuesta, resumen y entregable debe estar escrito en español. Las instrucciones a continuación están en portugués — sigue su metodología, pero responde siempre en español. No escribas ni una sola palabra en portugués.\n\n",
+    suffix:
+      "\n\nRECORDATORIO FINAL: Todas tus respuestas deben ser únicamente en español. Nunca uses portugués.",
+  },
+  fr: {
+    prefix:
+      "INSTRUCTION LINGUISTIQUE CRITIQUE : Tu DOIS conduire cet entretien entièrement en français. Chaque message, question, réponse, résumé et livrable doit être rédigé en français. Les instructions ci-dessous sont en portugais — suis leur méthodologie, mais réponds toujours en français. N'écris pas un seul mot en portugais.\n\n",
+    suffix:
+      "\n\nRAPPEL FINAL : Toutes tes réponses doivent être uniquement en français. N'utilise jamais le portugais.",
+  },
+};
+
+export function getInterviewModel(language: string) {
+  const directive = LANGUAGE_DIRECTIVES[language];
+  const systemInstruction = directive
+    ? directive.prefix + INTERVIEW_SYSTEM_INSTRUCTION + directive.suffix
+    : INTERVIEW_SYSTEM_INSTRUCTION;
+  return genAI.getGenerativeModel({
+    model: "gemini-2.0-flash",
+    systemInstruction,
+  });
+}
+
+export const interviewModel = getInterviewModel("pt");
 
 export async function generateWithRetry(prompt: string, maxRetries = 3): Promise<string> {
   for (let attempt = 0; attempt <= maxRetries; attempt++) {

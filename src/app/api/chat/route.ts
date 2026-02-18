@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { interviewModel } from "@/lib/gemini";
+import { getInterviewModel } from "@/lib/gemini";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -13,13 +13,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { message, history, interviewId } = await request.json();
+  const { message, history, interviewId, language } = await request.json();
   if (!message) {
     return NextResponse.json({ error: "message is required" }, { status: 400 });
   }
 
   try {
-    const chat = interviewModel.startChat({
+    const model = getInterviewModel(language ?? "pt");
+    const chat = model.startChat({
       history: history || [],
     });
 

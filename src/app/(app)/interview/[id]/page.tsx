@@ -35,6 +35,7 @@ export default async function InterviewDetailPage({
       interviewId={id}
       initialMessages={messages || []}
       interviewStatus={interview.status}
+      language={interview.language ?? null}
     />
   );
 }
